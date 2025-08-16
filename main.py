@@ -9,7 +9,6 @@ app = FastAPI()
 # se comunique com este backend.
 origins = [
     # Adicione a URL do seu site no Netlify aqui.
-    # Exemplo: https://prismatic-griffin-246daf.netlify.app
     "https://prismatic-griffin-246daf.netlify.app",
     # Adicione outras URLs de ambientes de teste se necessário
     "http://localhost:3000",
