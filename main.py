@@ -36,15 +36,13 @@ async def process_image_with_ocr(file: UploadFile = File(...)):
         image_data = await file.read()
         image = Image.open(io.BytesIO(image_data))
 
-        # Configura o Tesseract para usar a língua portuguesa
-        # Você pode precisar ajustar o caminho do tesseract.exe se estiver rodando localmente no Windows
-        # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
         # Extrai o texto da imagem
-        extracted_text = pytesseract.image_to_string(image, lang='por')
 
-        # Opcional: processamento do texto para extrair dados (preço, quantidade)
-        # Este é um passo futuro e pode ser mais complexo
+        # Adicione esta linha para definir o caminho do executável do Tesseract.
+        # Altere o caminho para o local onde você instalou o Tesseract no seu computador.
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+        extracted_text = pytesseract.image_to_string(image, lang='por')
 
         return {
             "filename": file.filename,
@@ -56,4 +54,3 @@ async def process_image_with_ocr(file: UploadFile = File(...)):
             "error": f"Erro ao processar a imagem: {str(e)}",
             "status": "error"
         }
-
