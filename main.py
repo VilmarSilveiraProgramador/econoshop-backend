@@ -40,7 +40,8 @@ async def process_image_with_ocr(file: UploadFile = File(...)):
 
         # Adicione esta linha para definir o caminho do executável do Tesseract.
         # Altere o caminho para o local onde você instalou o Tesseract no seu computador.
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        pytesseract.pytesseract.tesseract_cmd = 'tesseract'
 
         extracted_text = pytesseract.image_to_string(image, lang='por')
 
