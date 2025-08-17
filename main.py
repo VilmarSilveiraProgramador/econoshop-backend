@@ -91,7 +91,7 @@ async def add_item_to_cart(user_id: str, name: str, price: float, db: Session = 
 @app.get("/cart/{user_id}")
 async def get_user_cart(user_id: str, db: Session = Depends(get_db)):
     cart_items = db.query(CartItem).filter(CartItem.user_id == user_id).all()
-    return {"items": cart_items}
+    return cart_items # CORREÇÃO: Retorna a lista diretamente, sem um objeto.
 
 # NOVO: Rota para remover um item do carrinho
 @app.delete("/cart/remove/{item_id}")
