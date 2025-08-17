@@ -3,3 +3,5 @@ uvicorn
 python-multipart
 pytesseract
 Pillow
+sqlalchemy
+psycopg2-binary

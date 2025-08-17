@@ -1,8 +1,13 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pytesseract
 from PIL import Image
 import io
+import os
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
 # Cria a instância do FastAPI
 app = FastAPI()
@@ -21,6 +26,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Configuração do Banco de Dados PostgreSQL (Neon)
+# A URL do seu banco de dados no Neon será definida como uma variável de ambiente no Render.
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# Modelo de Dados do Carrinho
+class CartItem(Base):
+    __tablename__ = "cart_items"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, index=True) # ID do usuário logado
+    name = Column(String, index=True)
+    price = Column(Float)
+    quantity = Column(Integer, default=1)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+# Cria a tabela no banco de dados se ela não existir
+Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # Rota de teste
 @app.get("/test")
@@ -32,17 +65,9 @@ async def test_connection():
 @app.post("/process-image")
 async def process_image_with_ocr(file: UploadFile = File(...)):
     try:
-        # Lê o conteúdo da imagem em memória
         image_data = await file.read()
         image = Image.open(io.BytesIO(image_data))
-
-        # Extrai o texto da imagem
-
-        # Adicione esta linha para definir o caminho do executável do Tesseract.
-        # Altere o caminho para o local onde você instalou o Tesseract no seu computador.
-        # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
         pytesseract.pytesseract.tesseract_cmd = 'tesseract'
-
         extracted_text = pytesseract.image_to_string(image, lang='por')
 
         return {
